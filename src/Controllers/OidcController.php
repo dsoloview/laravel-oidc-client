@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 
 class OidcController extends Controller
 {
-    private OidcProvider $oidc;
+    protected OidcProvider $oidc;
 
     public function __construct(OidcProvider $oidc)
     {
