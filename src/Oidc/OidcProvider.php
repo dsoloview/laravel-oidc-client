@@ -15,7 +15,7 @@ class OidcProvider
     #[Pure]
     public function __construct(Client $oidc)
     {
-        $this->oidc = $oidc;
+        $this->oidc = $oidc->autoDiscovery('oidc.provider_url');
     }
 
     public function getAuthLink(): string
