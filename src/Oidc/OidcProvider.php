@@ -2,30 +2,26 @@
 
 namespace Dsoloview\LaravelOIDC\Oidc;
 
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Http\Request;
 use JetBrains\PhpStorm\Pure;
-use Maicol07\OpenIDConnect\Client;
-use Maicol07\OpenIDConnect\UserInfo;
 
 class OidcProvider
 {
-    private Client $oidc;
+    private OidcClient $oidc;
 
     #[Pure]
-    public function __construct(Client $oidc)
+    public function __construct(OidcClient $oidc)
     {
-        $this->oidc = $oidc->autoDiscovery('oidc.provider_url');
+        $this->oidc = $oidc;
     }
 
     public function getAuthLink(): string
     {
-        return $this->oidc->getAuthorizationUrl(state: csrf_token());
+        return $this->oidc->getAuthLink();
     }
 
-    final public function getUserInfo(): UserInfo
+    final public function getToken(): UserInfo
     {
-        $this->oidc->authenticate();
+        $this->oidc->getToken();
         return $this->oidc->getUserInfo();
     }
 

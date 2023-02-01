@@ -4,6 +4,7 @@ namespace Dsoloview\LaravelOIDC\Controllers;
 
 use Dsoloview\LaravelOIDC\Oidc\OidcProvider;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class OidcController extends Controller
@@ -19,9 +20,9 @@ class OidcController extends Controller
         return redirect()->away($this->oidc->getAuthLink());
     }
 
-    public function callback()
+    public function callback(Request $request)
     {
-        dd($this->oidc->getUserInfo());
+        $this->oidc->getToken();
     }
 
 }
