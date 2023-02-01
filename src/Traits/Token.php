@@ -4,15 +4,17 @@ namespace Dsoloview\LaravelOIDC\Traits;
 
 
 use Dsoloview\LaravelOIDC\Exceptions\OidcException;
+use Dsoloview\LaravelOIDC\Oidc\AuthData;
 use Illuminate\Support\Facades\Session;
 
 trait Token
 {
-    public function getToken(): void
-    {
-        $this->checkState();
-        $this->checkCode();
+    private string $accessToken;
+    private string $idToken;
 
+    public function getToken(): AuthData
+    {
+        $this->checkCode();
 
         $queryParams = [
             'client_id' => $this->config->getClientId(),
@@ -21,8 +23,6 @@ trait Token
             'client_secret' => $this->config->getClientSecret(),
             'state' => $this->state,
             'redirect_uri' => $this->config->getRedirectUrl(),
-            'scope' => $this->config->getScopesAsString(),
-            'response_type' => 'code',
         ];
 
 
@@ -36,33 +36,25 @@ trait Token
             throw new OidcException($json['error_description']);
         }
 
+        $this->makeAuthData($json);
 
-        $payload = $this->jwtDecode($json['id_token']);
-
-        dd($payload);
-
+        return $this->authData;
     }
 
-    private function checkState()
-    {
-        if (!Session::has('oidc_state')) {
-            throw new OidcException("Don't have state");
-        }
-        if (Session::get('oidc_state') !== request()->get('state')) {
-            throw new OidcException("States mismatch");
-        }
-    }
-
-    private function checkCode()
+    private function checkCode(): void
     {
         if (request()->missing('code')) {
             throw new OidcException('Code is not present');
         }
     }
 
-    private function jwtDecode(string $token)
+    private function makeAuthData(array $json): void
     {
-        return json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $token)[1]))), true);
+        $this->authData = new AuthData();
+        $this->authData->setIdToken($json['id_token']);
+        $this->authData->setAccessToken($json['access_token']);
+        $this->authData->setRefreshToken($json['refresh_token']);
+
     }
 
 }

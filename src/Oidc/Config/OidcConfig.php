@@ -23,10 +23,12 @@ class OidcConfig
         $this->redirectUrl = config('oidc.redirect_url');
     }
 
-    public function setScopes(array $scopes): void
+    public function setScopes(array $scopes = null): void
     {
-        $this->checkScopes($scopes);
-        $this->scopes = $scopes;
+        if ($scopes) {
+            $this->checkScopes($scopes);
+            $this->scopes = $scopes;
+        }
     }
 
     private function checkScopes(array $scopes): void

@@ -14,15 +14,14 @@ class OidcProvider
         $this->oidc = $oidc;
     }
 
-    public function getAuthLink(): string
+    public function getAuthLink(array $scopes = null): string
     {
-        return $this->oidc->getAuthLink();
+        return $this->oidc->getAuthLink($scopes);
     }
 
-    final public function getToken(): UserInfo
+    final public function getToken(): AuthData
     {
-        $this->oidc->getToken();
-        return $this->oidc->getUserInfo();
+       return $this->oidc->getToken();
     }
 
 }

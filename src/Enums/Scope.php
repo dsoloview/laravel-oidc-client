@@ -2,7 +2,9 @@
 
 namespace Dsoloview\LaravelOIDC\Enums;
 
-enum Scope: string
+enum Scope
 {
-    case openid = "openid";
+    case openid;
+    case profile;
+    case snils;
 }

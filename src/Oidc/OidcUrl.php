@@ -16,7 +16,7 @@ class OidcUrl
             $this->providerUrl = $providerUrl;
             $this->autoDiscover();
         } else {
-            $this->authUrl = config('oidc.auth_url');
+            $this->authUrl = config('oidc.authorization_url');
             $this->tokenUrl = config('oidc.token_url');
         }
 

@@ -17,6 +17,8 @@ class OidcClient
     private OidcUrl $url;
     private string $state;
     private Client $httpClient;
+    private AuthData $authData;
+
     public function __construct()
     {
         $this->config = new OidcConfig();
@@ -28,10 +30,10 @@ class OidcClient
         ]);
     }
 
-    public function getAuthLink(): string
+    public function getAuthLink(array $scopes = null): string
     {
-        Session::set('oidc_state', $this->state);
-
+        $this->config->setScopes($scopes);
+        
         $params = [
             'response_type' => 'code',
             'redirect_uri' => $this->config->getRedirectUrl(),
