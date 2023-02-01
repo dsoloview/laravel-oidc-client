@@ -11,6 +11,6 @@ class LaravelProvider extends ServiceProvider
             __DIR__.'/../config/oidc.php' => config_path('oidc.php'),
         ]);
 
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
     }
 }
