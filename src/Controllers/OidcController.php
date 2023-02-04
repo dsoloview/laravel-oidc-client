@@ -7,6 +7,7 @@ use Dsoloview\LaravelOIDC\Oidc\OidcProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class OidcController extends Controller
 {
@@ -24,8 +25,13 @@ class OidcController extends Controller
 
     public function callback(Request $request)
     {
-        $authData = $this->oidc->getToken();
-        dd($authData->getIdTokenPayload());
+        $authData = $this->oidc->getAuthData();
+
+        if (Auth::validate($authData->toArray())) {
+            return redirect()->intended('/home');
+        }
+
+        return redirect('/login');
     }
 
 }

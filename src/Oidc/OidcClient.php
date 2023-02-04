@@ -3,15 +3,15 @@
 namespace Dsoloview\LaravelOIDC\Oidc;
 
 use Dsoloview\LaravelOIDC\Oidc\Config\OidcConfig;
+use Dsoloview\LaravelOIDC\Traits\RefreshToken;
 use Dsoloview\LaravelOIDC\Traits\Token;
 use GuzzleHttp\Client;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class OidcClient
 {
     use Token;
+    use RefreshToken;
 
     private OidcConfig $config;
     private OidcUrl $url;

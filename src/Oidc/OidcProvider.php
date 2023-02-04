@@ -2,13 +2,11 @@
 
 namespace Dsoloview\LaravelOIDC\Oidc;
 
-use JetBrains\PhpStorm\Pure;
 
 class OidcProvider
 {
     private OidcClient $oidc;
 
-    #[Pure]
     public function __construct(OidcClient $oidc)
     {
         $this->oidc = $oidc;
@@ -19,9 +17,14 @@ class OidcProvider
         return $this->oidc->getAuthLink($scopes);
     }
 
-    final public function getToken(): AuthData
+    public function getAuthData(): AuthData
     {
        return $this->oidc->getToken();
+    }
+
+    public function refreshToken(string $refreshToken): AuthData
+    {
+        return $this->oidc->refreshToken($refreshToken);
     }
 
 }

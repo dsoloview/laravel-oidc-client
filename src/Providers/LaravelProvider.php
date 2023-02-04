@@ -2,6 +2,8 @@
 
 namespace Dsoloview\LaravelOIDC\Providers;
 
+use Dsoloview\LaravelOIDC\Auth\Guard\OidcWebGuard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelProvider extends ServiceProvider
@@ -12,5 +14,13 @@ class LaravelProvider extends ServiceProvider
         ]);
 
         $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+    }
+
+    public function register()
+    {
+        Auth::extend('oidc-guard', function ($app, $name, array $config) {
+            return new OidcWebGuard(Auth::createUserProvider($config['provider']), $app->request);
+        });
     }
 }

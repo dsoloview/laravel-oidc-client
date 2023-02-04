@@ -2,30 +2,21 @@
 
 namespace Dsoloview\LaravelOIDC\Traits;
 
-
 use Dsoloview\LaravelOIDC\Exceptions\OidcException;
 use Dsoloview\LaravelOIDC\Oidc\AuthData;
 use Dsoloview\LaravelOIDC\Oidc\OidcSessionService;
-use Illuminate\Support\Facades\Session;
 
-trait Token
+trait RefreshToken
 {
-    private string $accessToken;
-    private string $idToken;
-
-    public function getToken(): AuthData
+    public function refreshToken(string $refreshToken): AuthData
     {
-        $this->checkCode();
-
         $queryParams = [
             'client_id' => $this->config->getClientId(),
-            'code' => request()->get('code'),
-            'grant_type' => 'authorization_code',
+            'grant_type' => 'refresh_token',
             'client_secret' => $this->config->getClientSecret(),
-            'state' => $this->state,
+            'refresh_token' => $refreshToken,
             'redirect_uri' => $this->config->getRedirectUrl(),
         ];
-
 
         $response = $this->httpClient->request('POST', $this->url->getTokenUrl(), [
             'form_params' => $queryParams
@@ -42,12 +33,4 @@ trait Token
 
         return $this->authData;
     }
-
-    private function checkCode(): void
-    {
-        if (request()->missing('code')) {
-            throw new OidcException('Code is not present');
-        }
-    }
-
 }
