@@ -19,7 +19,7 @@ class AuthData implements Arrayable
             $this->accessToken = $credentials['access_token'];
             $this->refreshToken = $credentials['refresh_token'];
             $this->idToken = $credentials['id_token'];
-            $this->expiredId = Carbon::parse($credentials['id_token']['exp']);
+            $this->expiredId = Carbon::parse($this->getIdTokenPayload()['exp']);
         }
     }
 

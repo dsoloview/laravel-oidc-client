@@ -9,13 +9,12 @@ use Dsoloview\LaravelOIDC\Oidc\OidcSessionService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 
 class OidcWebGuard implements Guard
 {
 
-    protected Authenticatable|User $user;
+    protected Authenticatable|OidcUser|null $user = null;
     protected UserProvider $provider;
 
     protected OidcProvider $oidcProvider;
@@ -40,7 +39,7 @@ class OidcWebGuard implements Guard
 
     public function user()
     {
-        if (empty($this->user)) {
+        if (!isset($this->user)) {
             $this->authenticate();
         }
 
@@ -105,7 +104,7 @@ class OidcWebGuard implements Guard
             $authData = $this->oidcProvider->refreshToken($authData->getRefreshToken());
         }
 
-        return $authData->getExpiredId()['sub'];
+        return $authData->getIdTokenPayload()['sub'];
 
     }
 }

@@ -10,9 +10,6 @@ return new class extends Migration {
         Schema::create('oidc_users', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('oidc_id')->unique();
-            $table->string('access_token')->nullable();
-            $table->string('refresh_token')->nullable();
-            $table->string('id_token')->nullable();
             $table->timestamps();
         });
     }
