@@ -14,6 +14,8 @@ return new class extends Migration {
 
     public function down()
     {
-        Schema::dropIfExists('oidc_users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('oidc_id');
+        });
     }
 };
