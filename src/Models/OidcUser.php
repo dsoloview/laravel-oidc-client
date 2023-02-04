@@ -2,13 +2,10 @@
 
 namespace Dsoloview\LaravelOIDC\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 
-class OidcUser extends Model
+class OidcUser extends User
 {
-    use Authenticatable;
-
     protected $fillable = [
       'oidc_id'
     ];

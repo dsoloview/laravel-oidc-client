@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 class OidcWebGuard implements Guard
 {
 
-    protected Authenticatable|OidcUser|null $user = null;
+    protected ?OidcUser $user = null;
     protected UserProvider $provider;
 
     protected OidcProvider $oidcProvider;
@@ -40,7 +40,11 @@ class OidcWebGuard implements Guard
     public function user()
     {
         if (!isset($this->user)) {
-            $this->authenticate();
+            $user = $this->oidcProvider->authenticate();
+
+            if ($user) {
+                $this->setUser($user);
+            }
         }
 
         return $this->user;
@@ -59,7 +63,13 @@ class OidcWebGuard implements Guard
             return false;
         }
 
-        return $this->authenticate();
+        $user = $this->oidcProvider->authenticate();
+
+        if ($user) {
+            $this->setUser($user);
+            return true;
+        }
+        return false;
     }
 
     public function hasUser()
@@ -67,44 +77,8 @@ class OidcWebGuard implements Guard
         return $this->check();
     }
 
-    public function setUser(Authenticatable $user)
+    public function setUser(OidcUser|Authenticatable $user)
     {
         $this->user = $user;
-    }
-
-    public function authenticate()
-    {
-        $credentials = OidcSessionService::getCredentials();
-        if (empty($credentials)) {
-            return false;
-        }
-
-        $oidcUserId = $this->getOidcUserId($credentials);
-
-        if (!$oidcUserId) {
-            OidcSessionService::forgetCredentials();;
-            return false;
-        }
-
-        $user = OidcUser::where('oidc_id', '=', $oidcUserId)->first();
-
-        if (!$user) {
-            $user = OidcUser::create(['oidc_id' => $oidcUserId]);
-        }
-        $this->setUser($user);
-
-        return true;
-    }
-
-    public function getOidcUserId(array $credentials): string
-    {
-        $authData = new AuthData($credentials);
-
-        if ($authData->tokenIsExpired()) {
-            $authData = $this->oidcProvider->refreshToken($authData->getRefreshToken());
-        }
-
-        return $authData->getIdTokenPayload()['sub'];
-
     }
 }

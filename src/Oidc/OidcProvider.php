@@ -3,6 +3,8 @@
 namespace Dsoloview\LaravelOIDC\Oidc;
 
 
+use Dsoloview\LaravelOIDC\Models\OidcUser;
+
 class OidcProvider
 {
     private OidcClient $oidc;
@@ -25,6 +27,41 @@ class OidcProvider
     public function refreshToken(string $refreshToken): AuthData
     {
         return $this->oidc->refreshToken($refreshToken);
+    }
+
+    public function authenticate(): ?OidcUser
+    {
+        $credentials = OidcSessionService::getCredentials();
+        if (empty($credentials)) {
+            return null;
+        }
+
+        $oidcUserId = $this->getOidcUserId($credentials);
+
+        if (!$oidcUserId) {
+            OidcSessionService::forgetCredentials();;
+            return null;
+        }
+
+        $user = OidcUser::where('oidc_id', '=', $oidcUserId)->first();
+
+        if (!$user) {
+            $user = OidcUser::create(['oidc_id' => $oidcUserId]);
+        }
+
+        return $user;
+    }
+
+    public function getOidcUserId(array $credentials): string
+    {
+        $authData = new AuthData($credentials);
+
+        if ($authData->tokenIsExpired()) {
+            $authData = $this->refreshToken($authData->getRefreshToken());
+        }
+
+        return $authData->getIdTokenPayload()['sub'];
+
     }
 
 }
