@@ -3,6 +3,8 @@
 namespace Dsoloview\LaravelOIDC\Providers;
 
 use Dsoloview\LaravelOIDC\Auth\Guard\OidcWebGuard;
+use Dsoloview\LaravelOIDC\Middleware\OidcAuthenticated;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +24,10 @@ class LaravelProvider extends ServiceProvider
         Auth::extend('oidc-guard', function ($app, $name, array $config) {
             return new OidcWebGuard(Auth::createUserProvider($config['provider']), $app->request);
         });
+
+        $this->app['router']->middlewareGroup('oidc-auth', [
+            StartSession::class,
+            OidcAuthenticated::class,
+        ]);
     }
 }
