@@ -8,12 +8,16 @@ trait UserInfo
 {
     public function getUserInfo(string $accessToken): array
     {
-        $response = $this->httpClient->request('GET', $this->url->getUserInfoUrl(), [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
-                'Accept' => 'application/json',
-            ]
-        ])->getBody();
+        try {
+            $response = $this->httpClient->request('GET', $this->url->getUserInfoUrl(), [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Accept' => 'application/json',
+                ]
+            ])->getBody();
+        } catch (\Throwable $exception) {
+            return [];
+        }
 
         $json = json_decode($response, true);
 
