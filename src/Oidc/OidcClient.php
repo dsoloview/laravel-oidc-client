@@ -5,6 +5,7 @@ namespace Dsoloview\LaravelOIDC\Oidc;
 use Dsoloview\LaravelOIDC\Oidc\Config\OidcConfig;
 use Dsoloview\LaravelOIDC\Traits\RefreshToken;
 use Dsoloview\LaravelOIDC\Traits\Token;
+use Dsoloview\LaravelOIDC\Traits\UserInfo;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 
@@ -12,6 +13,7 @@ class OidcClient
 {
     use Token;
     use RefreshToken;
+    use UserInfo;
 
     private OidcConfig $config;
     private OidcUrl $url;

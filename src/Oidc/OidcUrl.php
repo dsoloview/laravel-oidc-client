@@ -8,6 +8,8 @@ class OidcUrl
     private string $authUrl;
     private string $tokenUrl;
 
+    private string $userInfoUrl;
+
     private const DISCOVER = '';
 
     public function __construct(bool $autoDiscover = true, string $providerUrl = null)
@@ -18,6 +20,7 @@ class OidcUrl
         } else {
             $this->authUrl = config('oidc.authorization_url');
             $this->tokenUrl = config('oidc.token_url');
+            $this->userInfoUrl = config('oidc.userinfo_url');
         }
 
     }
@@ -41,6 +44,11 @@ class OidcUrl
     public function getTokenUrl(): string
     {
         return $this->tokenUrl;
+    }
+
+    public function getUserInfoUrl(): string
+    {
+        return $this->userInfoUrl;
     }
 
 

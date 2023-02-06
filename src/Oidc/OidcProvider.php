@@ -21,7 +21,7 @@ class OidcProvider
 
     public function getAuthData(): AuthData
     {
-       return $this->oidc->getToken();
+        return $this->oidc->getToken();
     }
 
     public function refreshToken(string $refreshToken): AuthData
@@ -52,7 +52,8 @@ class OidcProvider
         return $user;
     }
 
-    public function getOidcUserId(array $credentials): string
+    // Get id from server
+    public function getOidcUserId(array $credentials): ?string
     {
         $authData = new AuthData($credentials);
 
@@ -60,8 +61,22 @@ class OidcProvider
             $authData = $this->refreshToken($authData->getRefreshToken());
         }
 
-        return $authData->getIdTokenPayload()['sub'];
+        $userInfo = $this->oidc->getUserInfo($authData->getAccessToken());
+
+        return $userInfo['id'] ?? null;
 
     }
+
+    // Get id from id_token
+//    public function getOidcUserId(array $credentials): string
+//    {
+//        $authData = new AuthData($credentials);
+//
+//        if ($authData->tokenIsExpired()) {
+//            $authData = $this->refreshToken($authData->getRefreshToken());
+//        }
+//
+//        return $authData->getIdTokenPayload()['sub'];
+//    }
 
 }
